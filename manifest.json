@@ -1,0 +1,22 @@
+{
+  "name": "Streaks Habit Tracker",
+  "short_name": "Streaks",
+  "description": "Track habits, build streaks and monitor your progress.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#6c9de8",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./streaks-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

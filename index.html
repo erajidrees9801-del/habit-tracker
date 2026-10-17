@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Streaks – Habit Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" href="streaks-icon.png">
+
+</head>
+
+<body>
+
+  <!-- ========== LOGIN / SIGN UP ========== -->
+  <main id="auth" class="auth">
+    <section class="hero">
+      <i class="blob b1"></i><i class="blob b2"></i>
+      <div class="brand"><span class="logo"><i data-ic="flame"></i></span>Streaks</div>
+      <div class="hero-body">
+        <h1>Small habits.<br>Big change.</h1>
+        <p>Track your daily routines, build streaks and get reminded at the right time.</p>
+        <div class="mock">
+          <div class="mock-row"><b style="--c:#10b981">💧</b><span>Drink water</span><em class="on"><i
+                data-ic="check"></i></em></div>
+          <div class="mock-row"><b style="--c:#f59e0b">📖</b><span>Read 20 pages</span><em class="on"><i
+                data-ic="check"></i></em></div>
+          <div class="mock-row"><b style="--c:#6366f1">🏃</b><span>Morning run</span><em></em></div>
+        </div>
+        <p class="quote" id="quote"></p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="auth-card">
+        <h2 id="authTitle">Welcome back</h2>
+        <p class="sub" id="authSub">Log in to continue your streak.</p>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-mode="login" role="tab" type="button">Log in</button>
+          <button class="tab" data-mode="signup" role="tab" type="button">Sign up</button>
+        </div>
+        <form id="authForm" novalidate>
+          <label>Email
+            <span class="field"><i data-ic="mail"></i><input id="email" type="email" placeholder="you@gmail.com"
+                autocomplete="email"></span>
+          </label>
+          <label>Password
+            <span class="field"><i data-ic="lock"></i><input id="password" type="password"
+                placeholder="At least 6 characters" autocomplete="current-password"><button type="button" class="eye"
+                id="eye" aria-label="Show password"><i data-ic="eye"></i></button></span>
+          </label>
+          <label id="confirmWrap" hidden>Confirm password
+            <span class="field"><i data-ic="lock"></i><input id="confirm" type="password" placeholder="Repeat password"
+                autocomplete="new-password"></span>
+          </label>
+          <p id="authError" class="error" role="alert"></p>
+          <button id="authBtn" class="btn primary block" type="submit"><span class="spinner"></span><span
+              class="label">Log in</span></button>
+        </form>
+        <p class="hint" id="modeHint"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== APP ========== -->
+  <div id="app" class="shell" hidden>
+    <aside class="side">
+      <div class="brand"><span class="logo">
+          <img src="streaks-icon.png" alt="Streaks" class="brand-icon">
+        </span><span class="bt">Streaks</span></div>
+      <nav>
+        <button class="nav active" data-view="today"><i data-ic="today"></i><span>Today</span></button>
+        <button class="nav" data-view="cal"><i data-ic="calendar"></i><span>Calendar</span></button>
+        <button class="nav" data-view="stats"><i data-ic="chart"></i><span>Analytics</span></button>
+        <button class="nav" data-view="rewards"><i data-ic="award"></i><span>Rewards</span></button>
+        <button class="nav" data-view="profile"><i data-ic="user"></i><span>Profile</span></button>
+      </nav>
+      <div class="me">
+        <span class="avatar" id="avatar">U</span>
+        <div class="who"><b id="meName">User</b><small id="meMail"></small></div>
+        <button class="icon-btn" id="logoutBtn" aria-label="Log out" title="Log out"><i data-ic="logout"></i></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <h2 id="greeting">Today</h2>
+          <p id="dateText"></p>
+        </div>
+        <button class="btn primary" id="openAdd"><i data-ic="plus"></i>New habit</button>
+      </header>
+
+      <!-- TODAY -->
+      <section id="v-today">
+        <div class="stats">
+          <div class="card stat">
+            <div class="ring" id="ring"><span id="pct">0%</span></div>
+            <div><small>Today's progress</small><b id="doneText">0 / 0</b></div>
+          </div>
+          <div class="card stat"><span class="ico" style="--c:#f59e0b">🔥</span>
+            <div><small>Best streak</small><b id="bestStreak">0 days</b></div>
+          </div>
+          <div class="card stat"><span class="ico" style="--c:#10b981">✅</span>
+            <div><small>Done this week</small><b id="weekDone">0</b></div>
+          </div>
+          <div class="card stat"><span class="ico" style="--c:#6366f1">🎯</span>
+            <div><small>Active habits</small><b id="activeCount">0</b></div>
+          </div>
+        </div>
+        <div class="card quote-card"><span>💬</span>
+          <p id="dQuote"></p>
+        </div>
+        <div class="filters" id="filters">
+          <button class="chip-btn active" data-f="all">All</button>
+          <button class="chip-btn" data-f="pending">Pending</button>
+          <button class="chip-btn" data-f="done">Completed</button>
+        </div>
+        <div id="list" class="grid"></div>
+        <div id="empty" class="empty">
+          <div>🌱</div>
+          <h3>Start your first habit</h3>
+          <p>Pick something small you can do every day.</p><button class="btn primary" id="emptyAdd">Add habit</button>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="v-stats" hidden>
+        <div class="card chart-card">
+          <h3>Last 7 days</h3>
+          <div class="chart-box"><canvas id="chart"></canvas></div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <h3>Insights</h3>
+          <div class="ins" id="insGrid"></div>
+        </div>
+        <div class="two">
+          <div class="card">
+            <h3>Last 5 weeks</h3>
+            <div class="heat" id="heat"></div>
+            <p class="legend">Darker = more habits completed</p>
+          </div>
+          <div class="card">
+            <h3>30-day success rate</h3>
+            <div id="rates"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="v-cal" hidden>
+        <div class="card">
+          <div class="cal-head"><button class="icon-btn" id="calPrev" aria-label="Previous month">‹</button>
+            <h3 id="calTitle"></h3><button class="icon-btn" id="calNext" aria-label="Next month">›</button>
+          </div>
+          <div class="cal-w">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div class="cal" id="cal"></div>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <h3 id="dayTitle"></h3>
+          <div id="dayList"></div>
+          <p class="legend">Tap a habit to mark it done or undone for this day.</p>
+        </div>
+      </section>
+
+      <!-- REWARDS -->
+      <section id="v-rewards" hidden>
+        <div class="card level">
+          <div class="lv" id="lvNum">1</div>
+          <div class="lv-info"><b id="lvTitle"></b><small id="xpText"></small>
+            <div class="bar"><i id="xpBar"></i></div>
+          </div>
+        </div>
+        <div class="badges" id="badges"></div>
+      </section>
+
+
+      <!-- PROFILE -->
+      <section id="v-profile" hidden>
+        <div class="card prof">
+          <div class="avatar big" id="pAvatar">U</div>
+          <div class="photo-controls">
+            <label for="profilePhotoInput" class="btn ghost">
+              Choose Profile Picture
+            </label>
+            <input type="file" id="profilePhotoInput" accept="image/png,image/jpeg,image/webp" hidden>
+            <button type="button" class="btn ghost" id="removeProfilePhoto">
+              Remove Photo
+            </button>
+          </div>
+          <label>Display name
+            <input id="pName" maxlength="24">
+          </label>
+          <p class="sub" id="pMail"></p>
+        </div>
+
+        <!-- ACCOUNT SECURITY -->
+        <div class="card">
+          <button type="button" class="section-toggle" id="securityToggle" aria-expanded="false"
+            aria-controls="securityPanel">
+            <span>
+              <strong>Account Security</strong>
+              <small>Email verification and password reset</small>
+            </span>
+            <span class="toggle-arrow">⌄</span>
+          </button>
+
+          <div id="securityPanel" hidden>
+            <div class="srow">
+              <span>Email verification</span>
+              <button class="btn ghost" id="verifyEmailBtn" type="button">
+                Send verification
+              </button>
+            </div>
+            <div class="srow">
+              <span>Reset password</span>
+              <button class="btn ghost" id="resetPasswordBtn" type="button">
+                Send reset link
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="card">
+          <button type="button" class="section-toggle" id="settingsToggle" aria-expanded="false"
+            aria-controls="settingsPanel">
+            <span>
+              <strong>Settings</strong>
+              <small>Theme, notifications and backup</small>
+            </span>
+            <span class="toggle-arrow">⌄</span>
+          </button>
+
+          <div id="settingsPanel" hidden>
+            <div class="srow">
+              <span>Theme</span>
+              <div class="seg" id="themeSeg">
+                <button type="button" data-t="auto">Auto</button>
+                <button type="button" data-t="light">Light</button>
+                <button type="button" data-t="dark">Dark</button>
+              </div>
+            </div>
+
+            <div class="srow">
+              <span>Alarm sound</span>
+              <label class="sw">
+                <input type="checkbox" id="soundOn">
+                <i></i>
+              </label>
+            </div>
+
+            <div class="srow">
+              <span>Browser notifications</span>
+              <button class="btn ghost" id="notifBtn" type="button">Enable</button>
+            </div>
+
+            <div class="srow">
+              <span>Backup</span>
+              <div class="row">
+                <button class="btn ghost" id="exportBtn" type="button">Export</button>
+                <button class="btn ghost" id="importBtn" type="button">Import</button>
+                <input type="file" id="importFile" accept=".json" hidden>
+              </div>
+            </div>
+
+            <div class="srow">
+              <span>Account</span>
+              <button class="btn ghost" id="logoutBtn2" type="button">Log out</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+      <!-- ADD HABIT MODAL -->
+      <div id="addModal" class="modal" hidden>
+        <form class="sheet" id="habitForm">
+          <div class="sheet-head">
+            <h3 id="modalTitle">New habit</h3><button type="button" class="icon-btn" data-close aria-label="Close"><i
+                data-ic="x"></i></button>
+          </div>
+          <label>Habit name<input id="habitName" maxlength="40" placeholder="e.g. Drink 8 glasses of water"
+              required></label>
+          <label>Icon</label>
+          <div class="picker" id="emojiPick"></div>
+          <label>Color</label>
+          <div class="picker" id="colorPick"></div>
+          <label>Repeat on</label>
+          <div class="picker days" id="dayPick"></div>
+
+          <label>Weekly goal</label>
+          <select id="weeklyTarget">
+            <option value="1">1 time per week</option>
+            <option value="2">2 times per week</option>
+            <option value="3" selected>3 times per week</option>
+            <option value="4">4 times per week</option>
+            <option value="5">5 times per week</option>
+            <option value="6">6 times per week</option>
+            <option value="7">7 times per week</option>
+          </select>
+
+
+          <label>Reminder <small>(optional)</small><input id="habitTime" type="time"></label>
+          <button class="btn primary block" id="saveBtn" type="submit">Save habit</button>
+        </form>
+      </div>
+
+      <!-- ALARM MODAL -->
+      <div id="alarm" class="modal" hidden>
+        <div class="sheet alarm-box">
+          <div class="bell-ring"><i data-ic="bell"></i></div>
+          <h3>Time for your habit</h3>
+          <p id="alarmText"></p>
+          <div class="row">
+            <button id="alarmDone" class="btn primary">Mark done</button>
+            <button id="alarmSnooze" class="btn ghost">Snooze 5 min</button>
+            <button id="alarmClose" class="btn ghost">Dismiss</button>
+          </div>
+        </div>
+      </div>
+      <div id="toast" class="toast" role="status"></div>
+      <canvas id="confetti"></canvas>
+
+      <script type="module" src="apps.js"></script>
+      <!-- Baqi tumhara existing code -->
+
+      <script>
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker.register("./sw.js")
+              .then(() => console.log("Service Worker registered"))
+              .catch((error) => console.error("Service Worker error:", error));
+          });
+        }
+      </script>
+</body>
+
+</html>
