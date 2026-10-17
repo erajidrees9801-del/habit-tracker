@@ -301,7 +301,7 @@ These rules mean: *a signed-in user can read and write only the document that be
 
 ### Step 5: Register the web app and copy the keys
 1. Click the **gear icon → Project settings**.
-2. Under **Your apps** click the **`</>` (Web)** icon.
+2. Under **Your app** click the **`</>` (Web)** icon.
 3. Enter a nickname (for example `streaks-web`). Leave **Firebase Hosting** unchecked. Click **Register app**.
 4. You will see a `firebaseConfig` block. Copy the values.
 
