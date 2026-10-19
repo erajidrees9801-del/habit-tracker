@@ -129,6 +129,12 @@ input:focus{border-color:var(--p);outline:none;box-shadow:0 0 0 4px rgba(79,70,2
 .picker button{width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:var(--bg);font-size:1.2rem;display:grid;place-items:center}
 .picker button.sel{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,70,229,.2)}
 #colorPick button{background:var(--c);border-color:transparent;border-radius:50%}
+#colorPick button.sel{
+  outline: 3px solid var(--p);
+  outline-offset: 4px;
+  box-shadow: 0 0 12px rgba(79,70,229,.65);
+  transform: scale(1.08);
+}
 .alarm-box{text-align:center;border-top:5px solid var(--alarm)}
 .alarm-box p{font-size:1.25rem;font-weight:700;margin:.4rem 0 1.4rem}
 .bell-ring{width:64px;height:64px;border-radius:50%;background:rgba(132, 66, 66, 0.12);color:var(--alarm);display:grid;place-items:center;margin:0 auto 1rem;animation:shake .6s infinite}

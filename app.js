@@ -118,7 +118,35 @@ function setMode(m) {
   $('#password').autocomplete = m === 'login' ? 'current-password' : 'new-password';
   $('#authError').textContent = '';
 }
+
+const emailInput = document.querySelector('#email');
+const passwordInput = document.querySelector('#password');
+
+if (emailInput && passwordInput) {
+  emailInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      passwordInput.focus();
+    }
+  });
+}
+
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => setMode(t.dataset.mode));
+
+$('#password').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && mode === 'signup') {
+    e.preventDefault();
+    $('#confirm').focus();
+  }
+$('#password').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && mode === 'signup') {
+    e.preventDefault();
+    $('#confirm').focus();
+  }
+});
+
+});
+
 $('#authForm').onsubmit = async ev => {
   ev.preventDefault();
   const email = $('#email').value.trim(), pw = $('#password').value, err = $('#authError'), btn = $('#authBtn');
@@ -138,14 +166,46 @@ $('#authForm').onsubmit = async ev => {
   }
   btn.classList.remove('loading');
 };
-$('#logoutBtn').onclick = () => db.logout();
+$('#logoutBtn').onclick = () => {
+  if (confirm('Are you sure you want to log out?')) {
+    db.logout();
+  }
+};
 
 /* ---------- Icons ---------- */
 const IC = { flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.4 1-3 0 1.4 1 2.5 2.5 2.5z"/>', mail: '<path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><polyline points="22,6 12,13 2,6"/>', lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>', plus: '<path d="M12 5v14M5 12h14"/>', today: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', chart: '<path d="M18 20V10M12 20V4M6 20v-6"/>', logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><path d="M21 12H9"/>', bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>', trash: '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>', check: '<polyline points="20 6 9 17 4 12"/>', x: '<path d="M18 6L6 18M6 6l12 12"/>', calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', award: '<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/>', user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>' };
 const ic = n => `<svg class="i" viewBox="0 0 24 24">${IC[n]}</svg>`;
 const paint = (root = document) => root.querySelectorAll('[data-ic]').forEach(e => { e.innerHTML = ic(e.dataset.ic); e.removeAttribute('data-ic') });
 function toast(m, a) { const t = $('#toast'); t.textContent = m; t.classList.toggle('act', !!a); if (a) { const b = document.createElement('button'); b.textContent = a.l; b.onclick = () => { a.f(); t.classList.remove('show') }; t.append(b) } t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), a ? 5000 : 2200) }
-$('#eye').onclick = () => { const p = $('#password'); p.type = p.type === 'password' ? 'text' : 'password' };
+
+function setupPasswordEye(buttonId, inputId) {
+  const button = document.getElementById(buttonId);
+  const input = document.getElementById(inputId);
+
+  if (!button || !input) return;
+
+  button.addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+
+    const icon = button.querySelector('svg');
+if (icon) {
+  icon.innerHTML = show
+    ? '<path d="M3 3l18 18"/><path d="M10 10a3 3 0 0 0 4 4"/><path d="M2 12s4-7 10-7c2 0 4 1 5 2"/><path d="M22 12s-4 7-10 7c-2 0-4-1-5-2"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+
+    button.setAttribute(
+      'aria-label',
+      show ? 'Hide password' : 'Show password'
+    );
+  });
+}
+setupPasswordEye('eye', 'password');
+setupPasswordEye('confirmEye', 'confirm');
+
+
+
 
 /* ---------- Settings, theme, effects ---------- */
 const S = Object.assign({ theme: 'auto', sound: true, names: {} }, JSON.parse(localStorage.ht_settings || '{}'));
@@ -259,7 +319,11 @@ $('#pName').onchange = e => {
   renderProfile();
   toast('Name updated!');
 };
-$('#logoutBtn2').onclick = () => db.logout();
+$('#logoutBtn2').onclick = () => {
+  if (confirm('Are you sure you want to log out?')) {
+    db.logout();
+  }
+};
 
 /* ---------- Profile Picture ---------- */
 
@@ -630,9 +694,11 @@ $('#colorPick').onclick = e => { const b = e.target.closest('button'); if (b) { 
 let editing = null, selD = [0, 1, 2, 3, 4, 5, 6];
 $('#dayPick').onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = +b.dataset.d; selD = selD.includes(d) ? selD.filter(x => x !== d) : [...selD, d]; buildPickers() };
 const openAdd = h => {
-  editing = h && h.id ? h : null; selE = editing ? editing.icon || '' : ''; selD = editing ? (editing.days || [0, 1, 2, 3, 4, 5, 6]) : [0, 1, 2, 3, 4, 5, 6];
+  editing = h && h.id ? h : null; selE = editing ? editing.icon || '' : '';selD = editing ? (editing.days || []) : [];
   selC = editing ? (editing.color || COLORS[0]) : selC;
-  $('#habitName').value = editing ? editing.name : ''; $('#weeklyTarget').value = editing ? (editing.weeklyTarget || 3) : 3; $('#habitTime').value = editing ? editing.time || '' : '';
+  $('#habitName').value = editing ? editing.name : '';
+$('#weeklyTarget').value = '';
+$('#habitTime').value = editing ? editing.time || '' : '';
   $('#modalTitle').textContent = editing ? 'Edit habit' : 'New habit'; $('#saveBtn').textContent = editing ? 'Save changes' : 'Save habit';
   buildPickers(); $('#addModal').hidden = false; $('#habitName').focus(); askNotif()
 };
@@ -654,7 +720,12 @@ $('#filters').onclick = e => {
   document.querySelectorAll('#filters .chip-btn').forEach(x => x.classList.toggle('active', x === b)); render()
 };
 function render() {
-  const k = key(), due = habits.filter(h => dueOn(h, new Date())), done = due.filter(h => h.log[k]).length, p = Math.round(rate(k) * 100);
+  
+  const k = key();
+const today = new Date();
+const due = habits.filter(h => dueOn(h, today));
+const done = due.filter(h => h.log[k]).length;
+const p = Math.round(rate(k) * 100);
   $('#ring').style.setProperty('--v', p); num($('#pct'), p, '%');
   $('#doneText').textContent = `${done} / ${due.length}`;
   num($('#bestStreak'), Math.max(0, ...habits.map(streak)), ' days');
@@ -662,7 +733,11 @@ function render() {
   num($('#activeCount'), habits.length);
   $('#empty').hidden = habits.length > 0;
   const list = $('#list'); list.innerHTML = ''; if (habits.length && !due.length) list.innerHTML = '<p class="rest">🌴 Rest day, nothing scheduled today.</p>';
-  due.filter(h => filter === 'all' || (filter === 'done') === !!h.log[k]).forEach((h, idx) => {
+  habits.filter(h =>
+  (filter === 'all' || (filter === 'done' && !!h.log[k])) &&
+  (filter !== 'pending' || (due.includes(h) && !h.log[k]))
+).forEach((h, idx) => {
+  const isDue = dueOn(h, today);
     const on = !!h.log[k], el = document.createElement('article');
 
     const now = new Date();
@@ -678,7 +753,7 @@ function render() {
       if (h.log[dateKey]) weeklyDone++;
     }
 
-    const weeklyTarget = h.weeklyTarget || 3;
+    const weeklyTarget = Number(h.weeklyTarget) || 1;
     const weeklyPercent = Math.min(
       100,
       Math.round((weeklyDone / weeklyTarget) * 100)
@@ -704,7 +779,14 @@ function render() {
 
       <div class="h-bot"><div class="week">${wk}</div><button class="check ${on ? 'on' : ''}${popId === h.id ? ' pop' : ''}" aria-label="Mark done">${ic('check')}</button></div>`;
     el.querySelector('.h-name').textContent = h.name;
-    el.querySelector('.check').onclick = () => toggle(h.id);
+    el.querySelector('.check').onclick = () => {
+  if (!isDue) {
+    toast('This habit is not scheduled for today.');
+    return;
+  }
+
+  toggle(h.id);
+};
     el.querySelector('.edit').onclick = () => openAdd(h);
     el.querySelector('.del').onclick = () => { const i = habits.indexOf(h); habits.splice(i, 1); persist(); render(); toast('Habit deleted', { l: 'Undo', f: () => { habits.splice(i, 0, h); persist(); render() } }) };
     list.append(el);
@@ -730,15 +812,81 @@ function renderStats() {
   document.querySelectorAll('.rn').forEach((e, i) => e.textContent = habits[i].name);
 }
 function toggle(id, k = key()) {
-  const h = habits.find(x => x.id === id), t = k === key();
-  if (h.log[k]) { delete h.log[k] } else { h.log[k] = true; if (t) { popId = id; if (rate(k) === 1) { toast('🎉 All habits done today!'); confetti() } else toast('Nice! Keep it going 🔥') } }
-  persist(); render()
+  const h = habits.find(x => x.id === id);
+  if (!h) return;
+
+  const t = k === key();
+
+  // Already completed? Allow undoing it.
+  if (h.log[k]) {
+    delete h.log[k];
+    persist();
+    render();
+    return;
+  }
+
+  // Apply today's schedule restriction only to today's completion.
+  if (t && h.days && h.days.length > 0) {
+    const todayDay = new Date().getDay();
+
+    if (!h.days.includes(todayDay)) {
+      toast('This habit is not scheduled for today.');
+      return;
+    }
+  }
+
+  // Count this habit's completions from Monday through Sunday.
+  if (t) {
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(today.getDate() - (today.getDay() + 6) % 7);
+
+    let weeklyDone = 0;
+
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+
+      if (h.log[key(day)]) weeklyDone++;
+    }
+
+    const target = Number(h.weeklyTarget);
+
+    if (target > 0 && weeklyDone >= target) {
+      toast(`Weekly goal reached — ${weeklyDone}/${target} completions.`);
+      return;
+    }
+  }
+
+  h.log[k] = true;
+
+  if (t) {
+    popId = id;
+
+    if (rate(k) === 1) {
+      toast('All habits done today!');
+      confetti();
+    } else {
+      toast('Nice! Keep it going!');
+    }
+  }
+
+  persist();
+  render();
 }
 $('#habitForm').onsubmit = e => {
   e.preventDefault();
   const name = $('#habitName').value.trim(); if (!name) return;
-  if (!selD.length) { toast('Select at least one day'); return }
-  const time = $('#habitTime').value, days = selD.length < 7 ? [...selD].sort() : null, weeklyTarget = Number($('#weeklyTarget').value) || 3, wasEditing = !!editing;
+  const time = $('#habitTime').value,
+  days = selD.length ? [...selD].sort() : null,
+  weeklyTarget = Number($('#weeklyTarget').value),
+  wasEditing = !!editing;
+
+if (!weeklyTarget || weeklyTarget < 1 || weeklyTarget > 7) {
+  toast('Please select a weekly goal');
+  return;
+}
   if (editing) {
     editing.name = name.slice(0, 40); editing.time = time; editing.color = selC; editing.weeklyTarget = weeklyTarget;
     if (days) editing.days = days; else delete editing.days;

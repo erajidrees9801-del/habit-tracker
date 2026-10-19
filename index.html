@@ -55,10 +55,17 @@
                 placeholder="At least 6 characters" autocomplete="current-password"><button type="button" class="eye"
                 id="eye" aria-label="Show password"><i data-ic="eye"></i></button></span>
           </label>
-          <label id="confirmWrap" hidden>Confirm password
-            <span class="field"><i data-ic="lock"></i><input id="confirm" type="password" placeholder="Repeat password"
-                autocomplete="new-password"></span>
-          </label>
+         
+<label id="confirmWrap" hidden>Confirm password
+  <span class="field">
+    <i data-ic="lock"></i>
+    <input id="confirm" type="password" placeholder="Repeat password" autocomplete="new-password">
+    <button type="button" id="confirmEye" class="eye" aria-label="Show confirm password">
+      <i data-ic="eye"></i>
+    </button>
+  </span>
+</label>
+
           <p id="authError" class="error" role="alert"></p>
           <button id="authBtn" class="btn primary block" type="submit"><span class="spinner"></span><span
               class="label">Log in</span></button>
@@ -292,23 +299,24 @@
           </div>
           <label>Habit name<input id="habitName" maxlength="40" placeholder="e.g. Drink 8 glasses of water"
               required></label>
-          <label>Icon</label>
           <div class="picker" id="emojiPick"></div>
           <label>Color</label>
           <div class="picker" id="colorPick"></div>
           <label>Repeat on</label>
           <div class="picker days" id="dayPick"></div>
 
-          <label>Weekly goal</label>
-          <select id="weeklyTarget">
-            <option value="1">1 time per week</option>
-            <option value="2">2 times per week</option>
-            <option value="3" selected>3 times per week</option>
-            <option value="4">4 times per week</option>
-            <option value="5">5 times per week</option>
-            <option value="6">6 times per week</option>
-            <option value="7">7 times per week</option>
-          </select>
+          
+<label>Weekly goal</label>
+<select id="weeklyTarget" required>
+  <option value="" selected disabled>Select weekly goal</option>
+  <option value="1">1 time per week</option>
+  <option value="2">2 times per week</option>
+  <option value="3">3 times per week</option>
+  <option value="4">4 times per week</option>
+  <option value="5">5 times per week</option>
+  <option value="6">6 times per week</option>
+  <option value="7">7 times per week</option>
+</select>
 
 
           <label>Reminder <small>(optional)</small><input id="habitTime" type="time"></label>
